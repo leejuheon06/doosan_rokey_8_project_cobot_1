@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Bartender Admin</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+<section class="admin-dashboard">
+  <header class="admin-topbar">
+    <div>
+      <p class="eyebrow">ROBOT MIXOLOGY CONTROL CENTER</p>
+      <h1>관리자 대시보드</h1>
+    </div>
+
+    <nav class="admin-nav">
+      <button onclick="location.href='/admin/inventory'">재고관리</button>
+      <button onclick="location.href='/admin/orders'">주문 내역</button>
+          <button onclick="location.href='/logout'">로그아웃</button>
+    </nav>
+
+    <div id="modeBadge" class="mode-badge idle">
+      <span class="mode-dot"></span>
+      <strong id="modeText">IDLE</strong>
+    </div>
+  </header>
+
+  <main class="dashboard-grid">
+    <section class="panel joint-panel">
+      <div class="panel-head">
+        <p class="eyebrow">ROBOT JOINT STATE</p>
+        <h2>현재 조인트 각도</h2>
+      </div>
+
+      <div class="joint-list">
+        <div class="joint-row"><span>J1</span><div class="joint-bar"><i id="jointBar1"></i></div><strong id="joint1">0.0°</strong></div>
+        <div class="joint-row"><span>J2</span><div class="joint-bar"><i id="jointBar2"></i></div><strong id="joint2">0.0°</strong></div>
+        <div class="joint-row"><span>J3</span><div class="joint-bar"><i id="jointBar3"></i></div><strong id="joint3">0.0°</strong></div>
+        <div class="joint-row"><span>J4</span><div class="joint-bar"><i id="jointBar4"></i></div><strong id="joint4">0.0°</strong></div>
+        <div class="joint-row"><span>J5</span><div class="joint-bar"><i id="jointBar5"></i></div><strong id="joint5">0.0°</strong></div>
+        <div class="joint-row"><span>J6</span><div class="joint-bar"><i id="jointBar6"></i></div><strong id="joint6">0.0°</strong></div>
+      </div>
+    </section>
+
+    <section class="panel status-panel">
+      <div class="panel-head">
+        <p class="eyebrow">SYSTEM STATUS</p>
+        <h2>상태 정보</h2>
+      </div>
+
+      <div class="status-cards">
+        <div class="status-card"><span>현재 모드</span><strong id="currentMode">IDLE</strong></div>
+        <div class="status-card"><span>현재 주문</span><strong id="currentRecipe">대기 중</strong></div>
+        <div class="status-card"><span>작업 단계</span><strong id="currentStep">Ready</strong></div>
+        <div class="status-card"><span>하드웨어 상태</span><strong id="hardwareState">STANDBY</strong></div>
+        <div class="status-card"><span>Recovery 상태</span><strong id="recoveryState">대기 없음</strong></div>
+        <div class="status-card"><span>Bridge 상태</span><strong id="adminBridgeState">연결 대기</strong></div>
+      </div>
+    </section>
+
+    <section class="panel speed-panel">
+      <div class="panel-head">
+        <p class="eyebrow">JOINT VELOCITY</p>
+        <h2>조인트 각속도</h2>
+      </div>
+
+      <div class="speed-grid joint-speed-grid">
+        <div class="speed-card joint-velocity-card">
+          <span>각 조인트 각속도</span>
+          <div class="joint-velocity-list">
+            <div><b>J1</b><strong id="jointVel1">0.00</strong><small>deg/s</small></div>
+            <div><b>J2</b><strong id="jointVel2">0.00</strong><small>deg/s</small></div>
+            <div><b>J3</b><strong id="jointVel3">0.00</strong><small>deg/s</small></div>
+            <div><b>J4</b><strong id="jointVel4">0.00</strong><small>deg/s</small></div>
+            <div><b>J5</b><strong id="jointVel5">0.00</strong><small>deg/s</small></div>
+            <div><b>J6</b><strong id="jointVel6">0.00</strong><small>deg/s</small></div>
+          </div>
+        </div>
+        <div class="speed-card average-velocity-card">
+          <span>평균 각속도</span>
+          <strong id="avgJointVelocity">0.00</strong>
+          <small>deg/s</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel progress-panel">
+      <div class="panel-head">
+        <p class="eyebrow">TASK SEQUENCE</p>
+        <h2>작업 진행 정보</h2>
+      </div>
+
+      <ol id="taskSteps" class="task-steps">
+        <li class="active"><span>0</span><div><strong>WAITING</strong><small>대기 중 / 주문 가능 상태</small></div></li>
+        <li><span>1</span><div><strong>MAKING</strong><small>음료 제조 중</small></div></li>
+        <li><span>2</span><div><strong>MAKING_DONE</strong><small>제조 완료</small></div></li>
+        <li><span>3</span><div><strong>DELIVERING</strong><small>손님한테 서빙 이동 중</small></div></li>
+        <li><span>4</span><div><strong>DELIVERED</strong><small>서빙 완료</small></div></li>
+        <li><span>5</span><div><strong>RETURNING_HOME</strong><small>초기 위치로 복귀 중</small></div></li>
+      </ol>
+    </section>
+
+    <section class="panel command-panel">
+      <div class="panel-head">
+        <p class="eyebrow">ROBOT COMMAND</p>
+        <h2>로봇 명령</h2>
+      </div>
+
+      <div class="command-grid admin-control-grid">
+        <button class="pause" onclick="sendRobotCommand('pause')">일시정지</button>
+        <button class="resume" onclick="sendRobotCommand('resume')">재개</button>
+        <button class="danger" onclick="sendRobotCommand('estop')">비상정지</button>
+        <button class="release" onclick="sendRobotCommand('estop_release')">비상해제</button>
+        <button class="home" onclick="sendRobotCommand('home_return')">홈복귀</button>
+        <button id="recoverBtn" class="recovery" onclick="sendRobotCommand('recover')">안전모드 Recovery</button>
+      </div>
+      <p class="command-help">PAUSE / RESUME / ESTOP / RELEASE / HOME / RECOVER는 <code>/ui/admin_control</code>로 전송됩니다.</p>
+    </section>
+
+    <section class="panel log-panel">
+      <div class="panel-head">
+        <p class="eyebrow">SYSTEM LOG</p>
+        <h2>로그 내역</h2>
+      </div>
+
+      <div id="logBox" class="log-box">
+        <p>[SYSTEM] Admin dashboard loaded.</p>
+      </div>
+    </section>
+  </main>
+</section>
+
+<div id="staffRequestModal" class="staff-modal hidden">
+  <div class="staff-modal-backdrop" onclick="confirmStaffRequests()"></div>
+  <div class="staff-modal-card">
+    <div class="staff-modal-icon">🔔</div>
+    <p class="eyebrow">STAFF REQUEST</p>
+    <h2>요청사항이 들어왔습니다</h2>
+    <p class="staff-modal-desc">고객 요청을 확인하고 필요한 조치를 진행하세요.</p>
+    <div id="staffRequestList" class="staff-request-list"></div>
+    <button class="staff-confirm" onclick="confirmStaffRequests()">확인</button>
+  </div>
+</div>
+
+
+<div id="commandConfirmModal" class="command-modal hidden" aria-hidden="true">
+  <div class="command-modal-backdrop" onclick="closeCommandConfirmModal(false)"></div>
+  <div class="command-modal-card" role="dialog" aria-modal="true" aria-labelledby="commandConfirmTitle">
+    <div id="commandConfirmIcon" class="command-modal-icon">⚙️</div>
+    <p class="eyebrow">ROBOT COMMAND CONFIRM</p>
+    <h2 id="commandConfirmTitle">명령 확인</h2>
+    <p id="commandConfirmMessage" class="command-modal-desc">로봇 명령을 전송하시겠습니까?</p>
+    <div class="command-modal-safety">
+      <strong>안전 확인</strong>
+      <span>로봇 작업 영역에 사람이 없고, 주변 장애물이 없는지 확인하세요.</span>
+    </div>
+    <div class="command-modal-actions">
+      <button type="button" class="command-cancel" onclick="closeCommandConfirmModal(false)">취소</button>
+      <button type="button" id="commandConfirmButton" class="command-confirm" onclick="closeCommandConfirmModal(true)">전송</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/admin.js"></script>
+</body>
+</html>

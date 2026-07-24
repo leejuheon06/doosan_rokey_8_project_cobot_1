@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주문 내역</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <style>
+    .page-shell{min-height:100vh;padding:26px;max-width:1500px;margin:0 auto}.page-nav{display:flex;gap:12px;align-items:center}.page-nav button{border:1px solid rgba(215,173,97,.35);border-radius:16px;background:rgba(255,255,255,.06);color:var(--cream);font-size:16px;font-weight:900;padding:14px 18px;cursor:pointer;transition:.18s}.page-nav button:hover{transform:translateY(-2px);border-color:var(--gold);color:var(--gold2)}.orders-panel{margin-top:22px}.sales-summary{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}.sales-summary h2{margin:0;font-size:28px}.total-sales{text-align:right}.total-sales span{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}.total-sales strong{font-size:34px;color:var(--gold2)}.order-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:22px;background:rgba(0,0,0,.16)}.order-table{width:100%;border-collapse:collapse;min-width:920px}.order-table th,.order-table td{padding:18px;border-bottom:1px solid var(--line);vertical-align:top}.order-table th{color:var(--gold2);font-size:14px;letter-spacing:.08em;text-align:left;background:rgba(255,255,255,.04)}.order-table td{font-size:16px}.order-no{font-weight:900;color:var(--cream)}.order-items{display:flex;flex-direction:column;gap:8px}.order-items span{color:#eee}.price{text-align:right;font-weight:900;color:var(--gold2);white-space:nowrap}.empty-row{text-align:center;color:var(--muted);padding:50px!important}@media(max-width:720px){.page-shell{padding:16px}.sales-summary{align-items:flex-start;flex-direction:column}.total-sales{text-align:left}.page-nav{width:100%;display:grid;grid-template-columns:1fr 1fr}.page-nav button{width:100%}}
+  </style>
+</head>
+<body>
+<section class="page-shell">
+  <header class="admin-topbar">
+    <div>
+      <p class="eyebrow">ORDER HISTORY</p>
+      <h1>주문 내역</h1>
+    </div>
+    <div class="page-nav">
+      <button onclick="location.href='/admin/dashboard'">대시보드</button>
+      <button onclick="location.href='/admin/inventory'">재고관리</button>
+    </div>
+  </header>
+
+  <section class="panel orders-panel">
+    <div class="sales-summary">
+      <div>
+        <p class="eyebrow">TODAY SALES</p>
+        <h2>최근 주문 목록</h2>
+      </div>
+      <div class="total-sales">
+        <span>금일 총 판매금액</span>
+        <strong id="totalToday">0원</strong>
+      </div>
+    </div>
+
+    <div class="order-table-wrap">
+      <table class="order-table">
+        <thead>
+          <tr>
+            <th>날짜/시간</th>
+            <th>주문번호</th>
+            <th>메뉴명 / 수량</th>
+            <th class="price">금액</th>
+          </tr>
+        </thead>
+        <tbody id="orderBody">
+          <tr><td colspan="4" class="empty-row">주문 내역을 불러오는 중입니다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+
+<script>
+function won(n){
+  return Number(n || 0).toLocaleString('ko-KR') + '원';
+}
+
+async function loadOrders(){
+  const res = await fetch('/api/orders');
+  const data = await res.json();
+  const body = document.getElementById('orderBody');
+
+  document.getElementById('totalToday').textContent = won(data.total_today);
+
+  if (!data.orders || data.orders.length === 0){
+    body.innerHTML = '<tr><td colspan="4" class="empty-row">주문 내역이 없습니다.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = data.orders.map(order => {
+    const items = order.items.map(item => `<span>${item.menu_name} x ${item.qty}</span>`).join('');
+    return `
+      <tr>
+        <td>${order.created_at}</td>
+        <td class="order-no">${order.order_number}</td>
+        <td><div class="order-items">${items}</div></td>
+        <td class="price">${won(order.total_price)}</td>
+      </tr>`;
+  }).join('');
+}
+
+loadOrders();
+setInterval(loadOrders, 3000);
+</script>
+</body>
+</html>

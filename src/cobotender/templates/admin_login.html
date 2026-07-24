@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 로그인</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body class="login-body">
+  <div class="login-backdrop"></div>
+  <form class="login-card" method="post">
+    <div class="login-logo">B</div>
+    <p class="eyebrow">ROBOT BARTENDER CONTROL</p>
+    <h1>관리자 로그인</h1>
+    <input name="username" placeholder="아이디" autocomplete="username">
+    <input name="password" placeholder="비밀번호" type="password" autocomplete="current-password">
+    {% if error %}<p class="login-error">{{ error }}</p>{% endif %}
+    <button>로그인</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoboTender Kiosk</title>
+  <link rel="stylesheet" href="/static/css/customer.css">
+</head>
+<body>
+<section id="standby" class="standby">
+  <div class="ambient-orb orb-a"></div>
+  <div class="ambient-orb orb-b"></div>
+
+  <div class="standby-shell">
+    <div class="brand-row">
+      <div class="brand-mark">B</div>
+      <div>
+        <p class="eyebrow">ROBOT MIXOLOGY LOUNGE</p>
+        <h1>CoboTender</h1>
+      </div>
+    </div>
+
+    <div class="slide-wrap">
+      <img id="slideImage" src="/static/images/slide_gatsby.jpg" alt="광고 슬라이드">
+      <div class="slide-overlay"></div>
+      <div class="slide-caption">
+        <span>Premium Night Service</span>
+        <strong>오늘의 한 잔을<br>로봇 바텐더가 준비합니다</strong>
+        <!-- <small>이미지는 static/images 폴더에서 교체할 수 있습니다.</small> -->
+      </div>
+      <div class="slide-dots"><i></i><i></i><i></i></div>
+    </div>
+
+    <button class="big-order" onclick="showOrderScreen()">
+      <span>주문하기</span>
+      <b>→</b>
+    </button>
+  </div>
+</section>
+
+<section id="orderScreen" class="order-screen hidden">
+  <aside class="category-panel">
+    <div class="side-brand">
+      <div class="brand-mark small">B</div>
+      <div>
+        <p>CoboTender</p>
+        <strong>MENU</strong>
+      </div>
+    </div>
+    <button class="cat active" data-category="cocktail"><span>🍸</span>칵테일</button>
+    <button class="cat" data-category="straight"><span>🥃</span>스트레이트</button>
+    <button class="cat" data-category="snack"><span>🍟</span>안주</button>
+    <button class="cat" data-category="request"><span>🔔</span>요청사항</button>
+    <div class="side-note">Please drink responsibly</div>
+  </aside>
+
+  <main class="menu-area">
+    <header class="menu-header">
+      <div>
+        <p class="eyebrow">SELECT YOUR ORDER</p>
+        <h2>원하는 메뉴를 선택하세요</h2>
+      </div>
+      <div class="service-badge">ROBOT READY</div>
+    </header>
+
+    <div id="menuGrid" class="menu-grid"></div>
+
+    <section class="cart-box">
+      <div class="cart-head">
+        <div>
+          <p class="eyebrow">ORDER CART</p>
+          <h2>장바구니</h2>
+        </div>
+        <strong id="cartTotal">0원</strong>
+      </div>
+      <div id="cartItems" class="cart-items empty">담긴 메뉴가 없습니다.</div>
+      <button class="submit-order" onclick="submitOrder()">주문하기</button>
+    </section>
+  </main>
+</section>
+
+<div id="popup" class="modal hidden">
+  <div class="modal-card">
+    <button class="close" onclick="closePopup()">×</button>
+    <img id="popupImage" src="" alt="메뉴 이미지">
+    <div class="modal-content">
+      <p class="eyebrow">DETAIL</p>
+      <h2 id="popupName"></h2>
+      <p id="popupDesc"></p>
+      <p id="popupPrice" class="modal-price"></p>
+      <div class="qty-row">
+        <button onclick="changeQty(-1)">-</button>
+        <input id="qtyInput" type="number" min="1" value="1" readonly>
+        <button onclick="changeQty(1)">+</button>
+      </div>
+      <button class="add-cart" onclick="addToCart()">장바구니 추가</button>
+    </div>
+  </div>
+</div>
+
+<section id="loadingScreen" class="loading hidden">
+  <div class="loading-card">
+    <div class="glass"><div class="liquid"></div></div>
+    <p class="eyebrow">ROBOT BARTENDER IS WORKING</p>
+    <h1 id="loadingText">얼음을 깎는중...</h1>
+  </div>
+</section>
+
+<section id="completeScreen" class="complete hidden">
+  <div class="complete-card">
+    <div class="checkmark">✓</div>
+    <h1>제조가 완료되었습니다!</h1>
+    <p>즐거운 시간되세요</p>
+  </div>
+</section>
+
+<script src="/static/js/customer.js"></script>
+</body>
+</html>
